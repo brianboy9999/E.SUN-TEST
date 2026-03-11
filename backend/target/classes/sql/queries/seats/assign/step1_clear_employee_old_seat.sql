@@ -1,3 +1,0 @@
-UPDATE Employee
-SET FLOOR_SEAT_SEQ = NULL
-WHERE EMP_ID = :empId;
