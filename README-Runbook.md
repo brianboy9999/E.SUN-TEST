@@ -1,19 +1,19 @@
-# Seat Assignment Runbook
+# 員工座位系統操作手冊
 
-## 1. Project Overview
-- Frontend: Vue 3 + Vite
-- Backend: Spring Boot + JDBC
-- Database: SQLite
-- SQL strategy: Pure SQL files under `backend/src/main/resources/sql`
+## 1. 專案概要
+- 前端：Vue 3 + Vite
+- 後端：Spring Boot + JDBC
+- 資料庫：SQLite
+- SQL 策略：Repository 層使用純 SQL，檔案放在 `backend/src/main/resources/sql`
 
-## 2. Prerequisites
+## 2. 環境需求
 - JDK 17
 - Maven 3.9+
 - Node.js 20 LTS
 - DB Browser for SQLite
-- (Optional) sqlite3 CLI
+- （可選）sqlite3 CLI
 
-## 3. Install Check
+## 3. 安裝檢查
 ```powershell
 java -version
 mvn -version
@@ -22,42 +22,42 @@ npm -v
 sqlite3 --version
 ```
 
-## 4. Start Backend
+## 4. 啟動後端
 ```powershell
-Set-Location d:\Brian\Java\backend
+Set-Location d:\Java\backend
 mvn spring-boot:run
 ```
 
-Expected:
-- Backend listens on `http://localhost:8080`
-- SQLite file created at `backend/data/app.db`
-- Tables/data initialized from `schema.sql` and `seed.sql`
+預期結果：
+- 後端監聽 `http://localhost:8080`
+- SQLite 檔案建立在 `backend/data/app.db`
+- 資料表與初始資料會由 `schema.sql`、`seed.sql` 自動初始化
 
-## 5. Start Frontend
+## 5. 啟動前端
 ```powershell
-Set-Location d:\Brian\Java\frontend
+Set-Location d:\Java\frontend
 npm install
 npm run dev
 ```
 
-Open:
+開啟：
 - `http://localhost:5173`
 
-## 6. Switch to Real Backend API
-Edit `frontend/src/services/api.js`:
+## 6. 切換為真實後端 API
+編輯 `frontend/src/services/api.js`：
 - `USE_MOCK_API = false`
 
-Note:
-- Current project default is already `USE_MOCK_API = false`.
-- Set it to `true` only when backend is unavailable.
+說明：
+- 目前預設已經是 `USE_MOCK_API = false`
+- 只有在後端無法啟動時，才改成 `true`
 
-## 7. API Endpoints
+## 7. API 端點
 - `GET /api/health`
 - `GET /api/seats`
 - `GET /api/employees`
 - `POST /api/seats/assign`
 
-Health check expected response:
+健康檢查預期回應：
 ```json
 {
   "success": true,
@@ -66,7 +66,7 @@ Health check expected response:
 }
 ```
 
-POST body example:
+POST 請求內容範例：
 ```json
 {
   "empId": "12006",
@@ -74,7 +74,7 @@ POST body example:
 }
 ```
 
-## 8. Verify Database Data
+## 8. 驗證資料庫內容
 ```sql
 SELECT
   S.FLOOR_SEAT_SEQ,
@@ -86,18 +86,18 @@ LEFT JOIN Employee E ON S.FLOOR_SEAT_SEQ = E.FLOOR_SEAT_SEQ
 ORDER BY S.FLOOR_NO, S.SEAT_NO;
 ```
 
-## 9. Stored Procedure Requirement Note
-SQLite does not support SQL Server style `CREATE PROCEDURE`.
-Equivalent behavior is implemented with transaction + 3 SQL steps in service layer:
-1. Clear employee old seat.
-2. Clear target seat occupant.
-3. Assign employee to target seat.
+## 9. 預存程序需求說明
+SQLite 不支援 SQL Server 風格的 `CREATE PROCEDURE`。
+本專案改用「Service 交易 + 3 段 SQL」達到等效流程：
+1. 清除員工舊座位
+2. 清除目標座位目前佔用者
+3. 將員工指定到新座位
 
-Reference:
+參考文件：
 - `backend/docs/stored-procedure-mapping.md`
 
-## 10. Common Troubleshooting
-- `E407 authenticationrequired`: proxy auth issue during npm/maven install.
-- `mvn not found`: Maven PATH not loaded, reopen terminal.
-- `vite not found`: `npm install` did not complete.
-- CORS blocked: ensure backend allows `http://localhost:5173`.
+## 10. 常見問題排查
+- `E407 authenticationrequired`：npm/maven 安裝時可能遇到代理驗證問題
+- `mvn not found`：Maven PATH 未生效，請重開終端機
+- `vite not found`：代表 `npm install` 尚未完成
+- CORS 被擋：請確認後端允許 `http://localhost:5173`

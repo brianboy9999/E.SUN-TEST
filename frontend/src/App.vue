@@ -94,7 +94,6 @@ onMounted(loadData)
   <main class="wrap">
     <header class="page-head">
       <h1>{{ title }}</h1>
-      <p>依 SQL 欄位設計顯示：FLOOR_SEAT_SEQ / FLOOR_NO / SEAT_NO / EMP_ID</p>
     </header>
 
     <section class="toolbar">
